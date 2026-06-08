@@ -1,0 +1,28 @@
+name: "Fase 1 — Teste do Telegram"
+
+# Este workflow serve apenas para testar que tudo está conectado.
+# Dispare manualmente na aba Actions do GitHub para verificar o setup.
+on:
+  workflow_dispatch:
+
+jobs:
+  test-telegram:
+    name: Envia mensagem de teste no Telegram
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configura Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instala dependências
+        run: pip install -r requirements.txt
+
+      - name: Envia mensagem de teste para Francisco
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python agents/telegram_bot.py test

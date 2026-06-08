@@ -1,0 +1,37 @@
+name: "Planejador Mensal de Posts"
+
+# Roda todo dia 25 às 10:00 (horário de Brasília = 13:00 UTC)
+on:
+  schedule:
+    - cron: "0 13 25 * *"
+  workflow_dispatch:  # permite rodar manualmente para testes
+
+jobs:
+  plan-posts:
+    name: Gera posts do mês e envia para aprovação
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # necessário para commitar queue.json atualizado
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configura Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instala dependências
+        run: pip install -r requirements.txt
+
+      - name: Roda o planejador
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          AIRBNB_ICAL_URL: ${{ secrets.AIRBNB_ICAL_URL }}
+          GITHUB_RAW_BASE: "https://raw.githubusercontent.com/${{ github.repository }}/main/assets/photos"
+        run: python agents/planner.py

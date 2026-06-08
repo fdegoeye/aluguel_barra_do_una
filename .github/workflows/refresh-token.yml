@@ -1,0 +1,71 @@
+name: "Renovação do Token do Instagram"
+
+# Roda todo dia 1 às 06:00 UTC — renova o token antes de expirar (60 dias)
+# A nova API do Instagram usa grant_type=ig_refresh_token via graph.instagram.com
+on:
+  schedule:
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    name: Renova token Instagram via nova API
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configura Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instala dependências
+        run: pip install requests
+
+      - name: Renova token e atualiza secret
+        env:
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT_FOR_SECRETS }}
+          REPO: ${{ github.repository }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python - <<'EOF'
+          import os, requests, subprocess, sys
+
+          token = os.environ["INSTAGRAM_ACCESS_TOKEN"]
+
+          # Nova API do Instagram: ig_refresh_token
+          resp = requests.get(
+              "https://graph.instagram.com/v21.0/refresh_access_token",
+              params={
+                  "grant_type": "ig_refresh_token",
+                  "access_token": token,
+              }
+          )
+          resp.raise_for_status()
+          new_token = resp.json()["access_token"]
+
+          # Atualiza o secret via GitHub CLI
+          repo = os.environ["REPO"]
+          result = subprocess.run(
+              ["gh", "secret", "set", "INSTAGRAM_ACCESS_TOKEN", "--body", new_token, "--repo", repo],
+              env={**os.environ, "GH_TOKEN": os.environ["GH_TOKEN"]},
+              capture_output=True, text=True
+          )
+          if result.returncode != 0:
+              print(f"Erro ao atualizar secret: {result.stderr}")
+              requests.post(
+                  f"https://api.telegram.org/bot{os.environ['TELEGRAM_BOT_TOKEN']}/sendMessage",
+                  json={
+                      "chat_id": os.environ["TELEGRAM_CHAT_ID"],
+                      "text": "⚠️ *Atenção!* Não consegui renovar o token do Instagram automaticamente. Me chama para resolver antes que expire.",
+                      "parse_mode": "Markdown"
+                  }
+              )
+              sys.exit(1)
+          else:
+              print("Token renovado com sucesso!")
+          EOF
