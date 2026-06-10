@@ -57,7 +57,7 @@ Sentar na praia ou na piscina fica a seu critério.
 
 - **Check-in:** *a partir das 14h*
 - **Check-out:** *até 18h*
-- **Aceita animais de estimação?** *Sim, porém não é permitido cachorros na praia. Portanto precisa ficar atento para o portão da praia ficar sempre fechado. Importante também respeitar os vizinhos e mantendo as portas da casa fechada para o cachorro não ficar livre no condominio.*
+- **Aceita animais de estimação?** *Não. Animais de estimação não são permitidos.*
 - **Fumantes?** *Permitido somente na área externa*
 - **Eventos e festas?** *Não permitido*
 - **Mínimo de noites:** *2 noites nos fins de semana, 3 noites nos feriados*

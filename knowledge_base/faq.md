@@ -24,7 +24,7 @@ R: *A casa fica na Praia da Barra do Una, em São Sebastião/SP, frente mar e a 
 **P: Tem Wi-Fi? A internet é boa?** R: *Sim! Wi-Fi de fibra óptica, funciona bem para home office e streaming.*
 
 **P: Aceita pets?**
-R: *Sim, aceitamos! Mas atenção: cachorros não são permitidos na praia do condomínio, então o portão para a praia precisa ficar sempre fechado. Pedimos também que o pet não fique solto no condomínio para respeitar os vizinhos.*
+R: *Não. Infelizmente não aceitamos animais de estimação.*
 
 **P: Quantas pessoas cabem?**
 R: *A casa comporta até 8 pessoas. São 4 suítes com 2 camas de casal e 4 camas de solteiro. Até 4 convidados extras podem ser combinados com antecedência com a caseira.*
