@@ -82,6 +82,8 @@ def publish_photo(image_url: str, caption: str) -> str:
         "access_token": _token(),
     }
     resp = requests.post(container_url, data=container_data, timeout=30)
+    if not resp.ok:
+        print(f"Erro Instagram API: {resp.status_code} — {resp.text}")
     resp.raise_for_status()
     creation_id = resp.json()["id"]
 

@@ -8,6 +8,7 @@ import os
 import sys
 from datetime import date
 from pathlib import Path
+from urllib.parse import quote
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -44,7 +45,8 @@ def run():
 
     print(f"Publicando post: {post['id']} — {post['theme']}")
 
-    photo_url = f"{GITHUB_RAW_BASE}/{post['photo']}"
+    photo_url = f"{GITHUB_RAW_BASE}/{quote(post['photo'])}"
+    print(f"URL da foto: {photo_url}")
 
     try:
         media_id = publish_photo(image_url=photo_url, caption=post["caption"])
