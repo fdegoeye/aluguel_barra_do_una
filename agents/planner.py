@@ -20,7 +20,7 @@ from telegram_bot import send_approval_summary, send_post_for_approval, send_mes
 
 
 PHOTOS_DIR = Path(__file__).parent.parent / "assets" / "photos"
-POSTS_PER_MONTH = 3
+POSTS_PER_MONTH = int(os.environ.get("POSTS_PER_MONTH", "3"))
 INTERVAL_DAYS = 10  # 1 post a cada 10 dias
 
 
@@ -39,12 +39,19 @@ def get_posted_captions() -> list[str]:
 
 
 def build_system_prompt(knowledge: str, photos: list[str], available_windows: list[dict]) -> str:
-    return f"""Você é um assistente de marketing especialista em aluguel de temporada no Brasil.
-Você cria posts para o Instagram de uma casa de temporada em Barra do Una (litoral norte de SP).
+    return f"""Você é um especialista em marketing de aluguel de temporada no Brasil.
+Cria posts para o Instagram de uma casa em Barra do Una (litoral norte de SP).
 
-Tom: caloroso, convidativo, autêntico — como um amigo recomendando a casa.
-Nunca use palavras genéricas como "incrível", "perfeito", "paraíso".
-Use linguagem natural e específica sobre a casa e a região.
+OBJETIVO: converter seguidores em hóspedes. Cada post deve gerar desejo e ter um CTA claro.
+
+REGRAS DE ESCRITA:
+- Português brasileiro correto, sem erros ortográficos ou gramaticais
+- Texto curto e direto: máximo 150 palavras na legenda (sem contar hashtags)
+- Tom natural, como uma pessoa escrevendo — não marketing corporativo
+- Proibido: "incrível", "perfeito", "paraíso", "sonho", "maravilhoso", adjetivos vagos
+- Use detalhes concretos e específicos da casa e da região
+- Sempre termine com um CTA objetivo: "Datas disponíveis? Chama aqui." ou "Reserve pelo link na bio."
+- Revise toda a legenda antes de entregar para garantir que não há erros de português
 
 BASE DE CONHECIMENTO DA CASA:
 {knowledge}
@@ -120,8 +127,12 @@ Regras:
 
 def run():
     today = date.today()
-    # Calcula o primeiro dia do mês seguinte
-    if today.month == 12:
+    # Permite sobrescrever o mês alvo via variável de ambiente (formato: YYYY-MM)
+    target_month_env = os.environ.get("TARGET_MONTH", "")
+    if target_month_env:
+        year, month = map(int, target_month_env.split("-"))
+        next_month_start = date(year, month, 1)
+    elif today.month == 12:
         next_month_start = date(today.year + 1, 1, 1)
     else:
         next_month_start = date(today.year, today.month + 1, 1)

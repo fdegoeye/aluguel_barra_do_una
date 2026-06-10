@@ -11,10 +11,12 @@ import json
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
 
 import requests
 
 TELEGRAM_API = "https://api.telegram.org/bot{token}/{method}"
+PHOTOS_DIR = Path(__file__).parent.parent / "assets" / "photos"
 
 
 def _token() -> str:
@@ -40,17 +42,28 @@ def send_message(text: str, reply_markup: dict | None = None) -> dict:
     return _api("sendMessage", **payload)
 
 
-def send_photo(image_url: str, caption: str, reply_markup: dict | None = None) -> dict:
-    """Envia uma foto com legenda para Francisco."""
-    payload = {
+def send_photo(image_path_or_url: str, caption: str, reply_markup: dict | None = None) -> dict:
+    """Envia uma foto com legenda para Francisco. Aceita caminho local ou URL."""
+    token = _token()
+    url = TELEGRAM_API.format(token=token, method="sendPhoto")
+    data = {
         "chat_id": _chat_id(),
-        "photo": image_url,
         "caption": caption,
         "parse_mode": "Markdown",
     }
     if reply_markup:
-        payload["reply_markup"] = reply_markup
-    return _api("sendPhoto", **payload)
+        data["reply_markup"] = json.dumps(reply_markup)
+
+    path = Path(image_path_or_url)
+    if path.exists():
+        with open(path, "rb") as f:
+            resp = requests.post(url, data=data, files={"photo": f}, timeout=30)
+    else:
+        data["photo"] = image_path_or_url
+        resp = requests.post(url, data=data, timeout=30)
+
+    resp.raise_for_status()
+    return resp.json()
 
 
 def send_post_for_approval(post: dict, index: int, total: int) -> None:
@@ -58,7 +71,6 @@ def send_post_for_approval(post: dict, index: int, total: int) -> None:
     caption = (
         f"*Post {index}/{total} — {post['scheduled_date']}*\n\n"
         f"{post['caption']}\n\n"
-        f"📷 Foto sugerida: `{post['photo']}`\n"
         f"🕐 Horário: {post['scheduled_time']}"
     )
 
@@ -69,7 +81,13 @@ def send_post_for_approval(post: dict, index: int, total: int) -> None:
             {"text": "❌ Rejeitar", "callback_data": f"reject:{post['id']}"},
         ]]
     }
-    send_message(caption, reply_markup=keyboard)
+
+    photo_path = PHOTOS_DIR / post["photo"]
+    if photo_path.exists():
+        send_photo(str(photo_path), caption, reply_markup=keyboard)
+    else:
+        caption += f"\n\n📷 Foto: `{post['photo']}` _(adicione à pasta assets/photos/)_"
+        send_message(caption, reply_markup=keyboard)
 
 
 def send_approval_summary(posts: list[dict]) -> None:

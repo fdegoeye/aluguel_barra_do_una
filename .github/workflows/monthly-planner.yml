@@ -4,7 +4,16 @@ name: "Planejador Mensal de Posts"
 on:
   schedule:
     - cron: "0 13 25 * *"
-  workflow_dispatch:  # permite rodar manualmente para testes
+  workflow_dispatch:
+    inputs:
+      target_month:
+        description: "Mês alvo (YYYY-MM). Deixe vazio para o próximo mês."
+        required: false
+        default: ""
+      posts_per_month:
+        description: "Número de posts a gerar (padrão: 3)"
+        required: false
+        default: "3"
 
 jobs:
   plan-posts:
@@ -34,4 +43,6 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           AIRBNB_ICAL_URL: ${{ secrets.AIRBNB_ICAL_URL }}
           GITHUB_RAW_BASE: "https://raw.githubusercontent.com/${{ github.repository }}/main/assets/photos"
+          TARGET_MONTH: ${{ github.event.inputs.target_month }}
+          POSTS_PER_MONTH: ${{ github.event.inputs.posts_per_month || '3' }}
         run: python agents/planner.py
