@@ -50,7 +50,8 @@ REGRAS DE ESCRITA:
 - Tom natural, como uma pessoa escrevendo — não marketing corporativo
 - Proibido: "incrível", "perfeito", "paraíso", "sonho", "maravilhoso", adjetivos vagos
 - Use detalhes concretos e específicos da casa e da região
-- Sempre termine com um CTA objetivo: "Datas disponíveis? Chama aqui." ou "Reserve pelo link na bio."
+- NUNCA mencione preços na legenda — quem quiser saber o valor manda DM
+- Sempre termine com um CTA objetivo: "Quer saber mais? Chama aqui." ou "Manda uma DM com as datas."
 - Revise toda a legenda antes de entregar para garantir que não há erros de português
 
 BASE DE CONHECIMENTO DA CASA:
