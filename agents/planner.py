@@ -74,7 +74,19 @@ def generate_posts(next_month_start: date) -> list[dict]:
 
     system_prompt = build_system_prompt(knowledge, photos, available_windows)
 
-    user_message = f"""Crie exatamente {POSTS_PER_MONTH} posts para o Instagram da casa para publicar em {next_month_start.strftime('%B/%Y')}.
+    # Mês que queremos alugar = mês seguinte ao dos posts
+    if next_month_start.month == 12:
+        rental_month = date(next_month_start.year + 1, 1, 1)
+    else:
+        rental_month = date(next_month_start.year, next_month_start.month + 1, 1)
+    rental_month_name = rental_month.strftime("%B/%Y")
+
+    user_message = f"""Crie exatamente {POSTS_PER_MONTH} posts para publicar em {next_month_start.strftime('%B/%Y')}.
+
+OBJETIVO DESTE MÊS: atrair hóspedes para alugar a casa em {rental_month_name}.
+Todos os posts devem criar desejo e urgência em torno de {rental_month_name}.
+Use frases como "Julho ainda sem planos?", "Férias em julho na praia?", "Vagas limitadas para julho."
+Mencione que julho é alta temporada no litoral norte de SP — quem deixa para última hora não encontra.
 
 Posts anteriores (evite repetir os mesmos temas):
 {json.dumps(posted_captions, ensure_ascii=False)}
@@ -86,21 +98,21 @@ Para cada post, responda em JSON com este formato:
 {{
   "posts": [
     {{
-      "caption": "Legenda completa com hashtags no final (máximo 2200 caracteres)",
+      "caption": "Legenda com hashtags no final (máximo 150 palavras + hashtags)",
       "photo": "nome_do_arquivo_da_foto.jpg",
       "scheduled_date": "YYYY-MM-DD",
       "scheduled_time": "HH:MM",
-      "theme": "Tema do post (ex: pôr do sol, fim de semana, disponibilidade)"
+      "theme": "Tema do post (ex: urgência julho, estrutura da casa, localização)"
     }}
   ]
 }}
 
 Regras:
-- Varie os temas: não repita o mesmo assunto nos 3 posts
+- Varie os temas entre os posts mas mantenha o foco em converter para {rental_month_name}
 - Inclua 5-8 hashtags relevantes no final de cada legenda
-- Se houver janelas disponíveis no calendário, mencione pelo menos uma em um dos posts
 - Use a foto mais adequada para o tema (considere o nome do arquivo como dica)
 - Se não houver fotos, use "placeholder.jpg"
+- Termine sempre com um CTA claro: "Chama aqui.", "Link na bio.", "Datas disponíveis? Me chama."
 - A legenda deve parecer escrita por uma pessoa, não por um robô"""
 
     response = ask(system_prompt, user_message, use_cache=True)
