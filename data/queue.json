@@ -6,9 +6,11 @@
     "scheduled_date": "2026-06-10",
     "scheduled_time": "10:00",
     "theme": "Urgência julho — chamada inicial para reservas",
-    "status": "approved",
+    "status": "published",
     "created_at": "2026-06-10",
-    "photo_enhanced": "/home/runner/work/aluguel_barra_do_una/aluguel_barra_do_una/assets/photos/enhanced/87391b91.jpg"
+    "photo_enhanced": "/home/runner/work/aluguel_barra_do_una/aluguel_barra_do_una/assets/photos/enhanced/87391b91.jpg",
+    "published_at": "2026-06-10",
+    "media_id": "18174810808416573"
   },
   {
     "id": "05dee590",
