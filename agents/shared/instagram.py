@@ -9,6 +9,7 @@ Token obtido via: Meta for Developers → Agente Barra do Una-IG →
 """
 
 import os
+import time
 import requests
 
 GRAPH_URL = "https://graph.instagram.com/v21.0"
@@ -83,14 +84,32 @@ def publish_photo(image_url: str, caption: str) -> str:
     }
     resp = requests.post(container_url, data=container_data, timeout=30)
     if not resp.ok:
-        print(f"Erro Instagram API: {resp.status_code} — {resp.text}")
+        print(f"Erro Instagram API (criar container): {resp.status_code} — {resp.text}")
     resp.raise_for_status()
     creation_id = resp.json()["id"]
+    print(f"Container criado: {creation_id}")
+
+    # Passo 1b: aguarda o Instagram processar a imagem (máx 30s)
+    for attempt in range(10):
+        status_resp = requests.get(
+            f"{GRAPH_URL}/{creation_id}",
+            params={"fields": "status_code", "access_token": _token()},
+            timeout=30,
+        )
+        status = status_resp.json().get("status_code", "IN_PROGRESS")
+        print(f"Status do container ({attempt + 1}/10): {status}")
+        if status == "FINISHED":
+            break
+        if status == "ERROR":
+            raise Exception(f"Instagram recusou a imagem: {status_resp.text}")
+        time.sleep(3)
 
     # Passo 2: publicar o container
     publish_url = f"{GRAPH_URL}/{ig_id}/media_publish"
     publish_data = {"creation_id": creation_id, "access_token": _token()}
     resp = requests.post(publish_url, data=publish_data, timeout=30)
+    if not resp.ok:
+        print(f"Erro Instagram API (publicar): {resp.status_code} — {resp.text}")
     resp.raise_for_status()
     return resp.json()["id"]
 
