@@ -12,7 +12,7 @@ import base64
 import json
 from pathlib import Path
 
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageEnhance, ImageOps
 
 from shared.claude import get_client
 from shared import state
@@ -145,6 +145,8 @@ def enhance_photo(photo_name: str, post_id: str) -> str:
         return ""
 
     with Image.open(source) as img:
+        # Corrige rotação baseada nos dados EXIF (resolve fotos tiradas na vertical)
+        img = ImageOps.exif_transpose(img)
         if img.mode != "RGB":
             img = img.convert("RGB")
 
