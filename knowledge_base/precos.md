@@ -1,18 +1,16 @@
 # Preços e Disponibilidade
 
-
-
 ## Diárias por temporada
 
 
 | Período                         | Preço por noite | Mínimo de noites |
 | ------------------------------- | --------------- | ---------------- |
-| Baixa temporada (semana)        | R$ *3.800,00*   | *2 noites*       |
-| Baixa temporada (fim de semana) | R$ *3.800,00*   | *2 noites*       |
-| Alta temporada (jan, fev, jul)  | R$ *4.400,00*   | *4 noites*       |
-| Carnaval                        | R$ *4.400,00*   | *4 noites*       |
-| Réveillon                       | R$ *6.000,00*   | *5 noites*       |
-| Feriados prolongados            | R$ *4.400,00*   | *3 noites*       |
+| Baixa temporada (semana)        | R$ *4.500,00*   | *2 noites*       |
+| Baixa temporada (fim de semana) | R$ *4.500,00*   | *2 noites*       |
+| Alta temporada (jan, fev, jul)  | R$ *5.500,00*   | *4 noites*       |
+| Carnaval                        | R$ *5.500,00*   | *4 noites*       |
+| Réveillon                       | R$ *7.500,00*   | *7 noites*       |
+| Feriados prolongados            | R$ *5.500,00*   | *3 noites*       |
 
 
 ## O que está incluído no preço
