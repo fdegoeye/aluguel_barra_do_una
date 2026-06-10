@@ -82,11 +82,12 @@ def send_post_for_approval(post: dict, index: int, total: int) -> None:
         ]]
     }
 
-    photo_path = PHOTOS_DIR / post["photo"]
-    if photo_path.exists():
-        send_photo(str(photo_path), caption, reply_markup=keyboard)
+    # Usa foto melhorada se disponível, senão a original
+    photo_path = post.get("photo_enhanced") or str(PHOTOS_DIR / post.get("photo", ""))
+    if photo_path and Path(photo_path).exists():
+        send_photo(photo_path, caption, reply_markup=keyboard)
     else:
-        caption += f"\n\n📷 Foto: `{post['photo']}` _(adicione à pasta assets/photos/)_"
+        caption += f"\n\n📷 Foto: `{post.get('photo', 'nenhuma')}`"
         send_message(caption, reply_markup=keyboard)
 
 

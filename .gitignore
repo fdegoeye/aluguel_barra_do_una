@@ -16,3 +16,6 @@ env/
 # Editor
 .vscode/
 .idea/
+
+# Fotos processadas (geradas automaticamente a cada run)
+assets/photos/enhanced/

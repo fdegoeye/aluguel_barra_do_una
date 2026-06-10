@@ -17,6 +17,7 @@ from shared.claude import ask, load_knowledge_base
 from shared.airbnb import next_available_windows
 from shared import state
 from telegram_bot import send_approval_summary, send_post_for_approval, send_message
+from photo_curator import process_post
 
 
 PHOTOS_DIR = Path(__file__).parent.parent / "assets" / "photos"
@@ -158,8 +159,10 @@ def run():
         queue = []
     queue = [p for p in queue if p.get("status") == "approved"]
 
-    # Gera novos posts
+    # Gera novos posts e processa fotos
     new_posts = generate_posts(next_month_start)
+    print("Selecionando e melhorando fotos...")
+    new_posts = [process_post(p) for p in new_posts]
     queue.extend(new_posts)
 
     state.write("queue.json", queue)
