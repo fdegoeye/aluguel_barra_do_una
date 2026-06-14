@@ -34,4 +34,6 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           GITHUB_RAW_BASE: "https://raw.githubusercontent.com/${{ github.repository }}/main/assets/photos"
+          PERSONAL_INSTAGRAM_ACCESS_TOKEN: ${{ secrets.PERSONAL_INSTAGRAM_ACCESS_TOKEN }}
+          PERSONAL_INSTAGRAM_USER_ID: ${{ secrets.PERSONAL_INSTAGRAM_USER_ID }}
         run: python agents/publisher.py

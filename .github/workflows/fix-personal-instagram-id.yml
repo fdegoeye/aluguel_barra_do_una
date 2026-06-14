@@ -1,0 +1,21 @@
+name: "Configura PERSONAL_INSTAGRAM_USER_ID"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fix-user-id:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Busca ID pessoal e salva secret
+        env:
+          PERSONAL_INSTAGRAM_ACCESS_TOKEN: ${{ secrets.PERSONAL_INSTAGRAM_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT_FOR_SECRETS }}
+        run: |
+          RESPONSE=$(curl -s "https://graph.instagram.com/v23.0/me?fields=id,username,account_type&access_token=$PERSONAL_INSTAGRAM_ACCESS_TOKEN")
+          echo "Resposta: $RESPONSE"
+          USER_ID=$(echo $RESPONSE | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+          USERNAME=$(echo $RESPONSE | python3 -c "import sys,json; print(json.load(sys.stdin)['username'])")
+          echo "Conta: @$USERNAME — ID: $USER_ID"
+          gh secret set PERSONAL_INSTAGRAM_USER_ID --body "$USER_ID" --repo ${{ github.repository }}
+          echo "Secret salvo com sucesso!"

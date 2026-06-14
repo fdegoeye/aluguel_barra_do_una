@@ -13,7 +13,7 @@ from urllib.parse import quote
 sys.path.insert(0, str(Path(__file__).parent))
 
 from shared import state
-from shared.instagram import publish_photo
+from shared.instagram import publish_photo, post_story
 from telegram_bot import send_publish_confirmation, send_message
 
 # URL base pública das fotos no GitHub (substitua pelo seu usuário/repo)
@@ -70,6 +70,16 @@ def run():
         state.write("posted.json", posted)
 
         state.commit_and_push(f"agente: publica post {post['id']} ({post['theme']})")
+
+        # Repost automático no Story pessoal de Francisco (@kikodegoeye)
+        personal_token = os.environ.get("PERSONAL_INSTAGRAM_ACCESS_TOKEN", "")
+        personal_user_id = os.environ.get("PERSONAL_INSTAGRAM_USER_ID", "")
+        if personal_token and personal_user_id:
+            try:
+                story_id = post_story(photo_url, personal_token, personal_user_id)
+                print(f"Story publicado no @kikodegoeye! ID: {story_id}")
+            except Exception as story_err:
+                print(f"Aviso: não foi possível postar Story pessoal: {story_err}")
 
         # Notifica Francisco
         permalink = f"https://www.instagram.com/p/{media_id}/"

@@ -114,6 +114,53 @@ def publish_photo(image_url: str, caption: str) -> str:
     return resp.json()["id"]
 
 
+def post_story(image_url: str, personal_token: str, personal_user_id: str) -> str:
+    """
+    Publica uma imagem no Story do Instagram pessoal de Francisco (@kikodegoeye).
+    Retorna o ID do Story publicado.
+    """
+    # Passo 1: criar container de Story
+    container_resp = requests.post(
+        f"{GRAPH_URL}/{personal_user_id}/media",
+        data={
+            "image_url": image_url,
+            "media_type": "STORIES",
+            "access_token": personal_token,
+        },
+        timeout=30,
+    )
+    if not container_resp.ok:
+        print(f"Erro ao criar Story (container): {container_resp.status_code} — {container_resp.text}")
+    container_resp.raise_for_status()
+    creation_id = container_resp.json()["id"]
+
+    # Passo 2: aguarda processamento
+    for attempt in range(10):
+        status_resp = requests.get(
+            f"{GRAPH_URL}/{creation_id}",
+            params={"fields": "status_code", "access_token": personal_token},
+            timeout=30,
+        )
+        status = status_resp.json().get("status_code", "IN_PROGRESS")
+        print(f"Status Story ({attempt + 1}/10): {status}")
+        if status == "FINISHED":
+            break
+        if status == "ERROR":
+            raise Exception(f"Instagram recusou o Story: {status_resp.text}")
+        time.sleep(3)
+
+    # Passo 3: publicar
+    publish_resp = requests.post(
+        f"{GRAPH_URL}/{personal_user_id}/media_publish",
+        data={"creation_id": creation_id, "access_token": personal_token},
+        timeout=30,
+    )
+    if not publish_resp.ok:
+        print(f"Erro ao publicar Story: {publish_resp.status_code} — {publish_resp.text}")
+    publish_resp.raise_for_status()
+    return publish_resp.json()["id"]
+
+
 def refresh_token() -> str:
     """
     Renova o token de acesso antes de expirar (validade: 60 dias).
