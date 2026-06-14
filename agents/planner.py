@@ -54,8 +54,10 @@ REGRAS DE ESCRITA:
 - Curto: máximo 100 palavras na legenda (sem contar hashtags)
 - Proibido: linguagem de marketing, "vagas limitadas", "reserve já", "não perca", adjetivos vagos
 - Use detalhes reais e concretos da casa — quem lê deve sentir que já conhece o lugar
-- NUNCA mencione preços — quem quiser saber manda DM
-- Termine de forma leve e pessoal: "me manda DM", "chama aqui", "é só falar"
+- NUNCA mencione preços
+- Termine com uma pergunta sutil que planta a ideia — NÃO direcione para DM nem peça para entrar em contato
+- A pergunta final deve ser casual, como se Francisco estivesse conversando com amigos, não vendendo nada
+- Exemplos de encerramento: "Já se planejou para julho?", "Convidou seus pais para passar uma semana na praia?", "Ainda dá tempo de organizar uma semana com a galera.", "Julho na praia com as crianças — faz tempo que você não faz isso?"
 - Revise para garantir que não há erros de português
 
 BASE DE CONHECIMENTO DA CASA:
