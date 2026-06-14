@@ -175,6 +175,59 @@ def enhance_photo(photo_name: str, post_id: str) -> str:
     return str(output)
 
 
+def create_story_image(photo_name: str, post_id: str, cta_text: str) -> Path:
+    """
+    Cria imagem 9:16 para Story com texto CTA sobreposto.
+    Salva em assets/photos/stories/{post_id}.jpg e retorna o caminho.
+    """
+    from PIL import ImageDraw, ImageFont
+
+    stories_dir = PHOTOS_DIR / "stories"
+    stories_dir.mkdir(parents=True, exist_ok=True)
+    output = stories_dir / f"{post_id}.jpg"
+
+    source = PHOTOS_DIR / photo_name
+    if not source.exists():
+        return output
+
+    W, H = 1080, 1920
+
+    with Image.open(source) as img:
+        img = ImageOps.exif_transpose(img).convert("RGBA")
+
+        # Escala para preencher a largura
+        scale = W / img.width
+        new_h = int(img.height * scale)
+        img = img.resize((W, new_h), Image.LANCZOS)
+
+        canvas = Image.new("RGBA", (W, H), (0, 0, 0, 255))
+        y_offset = (H - new_h) // 2 if new_h < H else -((new_h - H) // 2)
+        canvas.paste(img, (0, y_offset))
+
+    # Faixa escura semitransparente na base para o texto ficar legível
+    overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(overlay).rectangle([(0, H - 500), (W, H)], fill=(0, 0, 0, 190))
+    canvas = Image.alpha_composite(canvas, overlay)
+
+    draw = ImageDraw.Draw(canvas)
+
+    try:
+        font_cta = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 80)
+        font_handle = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 56)
+    except Exception:
+        font_cta = ImageFont.load_default(size=80)
+        font_handle = ImageFont.load_default(size=56)
+
+    # CTA em branco
+    draw.text((W // 2, H - 320), cta_text, font=font_cta, fill=(255, 255, 255, 255), anchor="mm", align="center")
+    # Menção ao perfil da casa
+    draw.text((W // 2, H - 190), "@nossa_casa_no_una", font=font_handle, fill=(210, 210, 210, 255), anchor="mm")
+
+    canvas.convert("RGB").save(str(output), "JPEG", quality=92, optimize=True)
+    print(f"  Story image criada: {output}")
+    return output
+
+
 def process_post(post: dict) -> dict:
     """Seleciona e melhora a foto para um post. Retorna o post atualizado."""
     print(f"  Processando foto para post {post['id']} ({post.get('theme', '')})...")

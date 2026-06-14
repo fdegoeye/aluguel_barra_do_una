@@ -6,6 +6,7 @@ Roda todos os dias às 08:00 (BRT) via GitHub Actions.
 
 import os
 import sys
+import time
 from datetime import date
 from pathlib import Path
 from urllib.parse import quote
@@ -15,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from shared import state
 from shared.instagram import publish_photo, post_story
 from telegram_bot import send_publish_confirmation, send_message
+from photo_curator import create_story_image
 
 # URL base pública das fotos no GitHub (substitua pelo seu usuário/repo)
 GITHUB_RAW_BASE = os.environ.get(
@@ -69,14 +71,33 @@ def run():
         posted.append({**post, "status": "published", "media_id": media_id})
         state.write("posted.json", posted)
 
-        state.commit_and_push(f"agente: publica post {post['id']} ({post['theme']})")
+        # Cria imagem do Story com CTA antes de commitar
+        cta_text = post.get("story_cta", "Já tem planos\npara julho?")
+        story_image_path = create_story_image(post["photo"], post["id"], cta_text)
+
+        # Commita estado + imagem do Story juntos
+        state.commit_and_push(
+            f"agente: publica post {post['id']} ({post['theme']})",
+            extra_paths=["assets/photos/stories/"],
+        )
 
         # Repost automático no Story pessoal de Francisco (@kikodegoeye)
         personal_token = os.environ.get("PERSONAL_INSTAGRAM_ACCESS_TOKEN", "")
         personal_user_id = os.environ.get("PERSONAL_INSTAGRAM_USER_ID", "")
         if personal_token and personal_user_id:
             try:
-                story_id = post_story(photo_url, personal_token, personal_user_id)
+                # Aguarda CDN do GitHub propagar a imagem recém-commitada
+                time.sleep(10)
+                story_url = (
+                    f"{GITHUB_RAW_BASE}/stories/{post['id']}.jpg"
+                )
+                print(f"URL do Story: {story_url}")
+                story_id = post_story(
+                    story_url,
+                    personal_token,
+                    personal_user_id,
+                    link_url="https://www.instagram.com/nossa_casa_no_una/",
+                )
                 print(f"Story publicado no @kikodegoeye! ID: {story_id}")
             except Exception as story_err:
                 print(f"Aviso: não foi possível postar Story pessoal: {story_err}")

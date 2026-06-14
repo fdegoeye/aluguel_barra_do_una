@@ -125,19 +125,24 @@ def publish_photo(image_url: str, caption: str) -> str:
     return media_id, permalink
 
 
-def post_story(image_url: str, personal_token: str, personal_user_id: str) -> str:
+def post_story(image_url: str, personal_token: str, personal_user_id: str, link_url: str = "") -> str:
     """
     Publica uma imagem no Story do Instagram pessoal de Francisco (@kikodegoeye).
+    link_url: URL para o link sticker (opcional), ex: perfil da casa no Instagram.
     Retorna o ID do Story publicado.
     """
+    data: dict = {
+        "image_url": image_url,
+        "media_type": "STORIES",
+        "access_token": personal_token,
+    }
+    if link_url:
+        data["link_url"] = link_url
+
     # Passo 1: criar container de Story
     container_resp = requests.post(
         f"{GRAPH_URL}/{personal_user_id}/media",
-        data={
-            "image_url": image_url,
-            "media_type": "STORIES",
-            "access_token": personal_token,
-        },
+        data=data,
         timeout=30,
     )
     if not container_resp.ok:

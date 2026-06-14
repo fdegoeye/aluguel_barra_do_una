@@ -23,9 +23,10 @@ def write(filename: str, data: list | dict) -> None:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def commit_and_push(message: str) -> None:
+def commit_and_push(message: str, extra_paths: list[str] | None = None) -> None:
     """
     Commita e faz push das mudanças nos arquivos data/*.json.
+    Passa extra_paths para incluir outros diretórios/arquivos (ex: assets/).
     Chamado pelos agentes após atualizar o estado.
     Só funciona no ambiente do GitHub Actions (git configurado automaticamente).
     """
@@ -38,10 +39,9 @@ def commit_and_push(message: str) -> None:
             ["git", "config", "user.name", "Agente Barra do Una"],
             check=True, cwd=ROOT,
         )
-        subprocess.run(
-            ["git", "add", "data/"],
-            check=True, cwd=ROOT,
-        )
+        subprocess.run(["git", "add", "data/"], check=True, cwd=ROOT)
+        for path in (extra_paths or []):
+            subprocess.run(["git", "add", path], check=True, cwd=ROOT)
         result = subprocess.run(
             ["git", "diff", "--cached", "--quiet"],
             cwd=ROOT,
