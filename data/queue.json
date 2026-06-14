@@ -6,9 +6,11 @@
     "scheduled_date": "2026-06-14",
     "scheduled_time": "10:00",
     "theme": "Urgência julho — abertura de mês",
-    "status": "approved",
+    "status": "published",
     "created_at": "2026-06-14",
-    "photo_enhanced": "/home/runner/work/aluguel_barra_do_una/aluguel_barra_do_una/assets/photos/enhanced/44d8c130.jpg"
+    "photo_enhanced": "/home/runner/work/aluguel_barra_do_una/aluguel_barra_do_una/assets/photos/enhanced/44d8c130.jpg",
+    "published_at": "2026-06-14",
+    "media_id": "17929845798339363"
   },
   {
     "id": "23be8d54",
