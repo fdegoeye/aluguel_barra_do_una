@@ -1,6 +1,18 @@
 # Casa em Barra do Una
 
+## Sobre o Francisco (dono da casa)
 
+Francisco é surfista e usa a casa para descanso e esporte. Ele escreve para a própria rede de amigos no Instagram.
+Programas favoritos que ele faz na região e recomenda:
+- **Surf** na Barra do Una e nas praias vizinhas (Juquehy, Juréia, Bora-bora)
+- **Stand-up paddle** pelo Rio Una até Juquehy ou até o Engenho contornando o costão
+- **Banho de cachoeira** no Sertão do Una — trilha acessível pela estrada de terra
+- **Passeios de barco** pelas marinas da região: Ilha das Couves, Montão de Trigo, As Ilhas
+- **Peixe na grelha** — compra na peixaria local e faz na churrasqueira da casa
+- Almoço no Restaurante Giselle com vista para o Rio Una
+- Pedalar até Boraceia para trilhas mais longas e planas
+
+Os posts devem soar como Francisco recomendando esses programas para amigos — não como propaganda.
 
 ## Descrição geral
 
