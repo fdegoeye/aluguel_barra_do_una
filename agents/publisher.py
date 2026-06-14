@@ -49,7 +49,7 @@ def run():
     print(f"URL da foto: {photo_url}")
 
     try:
-        media_id = publish_photo(image_url=photo_url, caption=post["caption"])
+        media_id, permalink = publish_photo(image_url=photo_url, caption=post["caption"])
         print(f"Post publicado! Media ID: {media_id}")
 
         # Atualiza o status na queue
@@ -82,7 +82,6 @@ def run():
                 print(f"Aviso: não foi possível postar Story pessoal: {story_err}")
 
         # Notifica Francisco
-        permalink = f"https://www.instagram.com/p/{media_id}/"
         send_publish_confirmation(post, permalink)
 
     except Exception as e:

@@ -111,7 +111,18 @@ def publish_photo(image_url: str, caption: str) -> str:
     if not resp.ok:
         print(f"Erro Instagram API (publicar): {resp.status_code} — {resp.text}")
     resp.raise_for_status()
-    return resp.json()["id"]
+    media_id = resp.json()["id"]
+
+    # Busca o permalink real (o ID numérico não funciona como URL do Instagram)
+    permalink_resp = requests.get(
+        f"{GRAPH_URL}/{media_id}",
+        params={"fields": "permalink", "access_token": _token()},
+        timeout=30,
+    )
+    permalink = permalink_resp.json().get("permalink", "") if permalink_resp.ok else ""
+    print(f"Permalink: {permalink}")
+
+    return media_id, permalink
 
 
 def post_story(image_url: str, personal_token: str, personal_user_id: str) -> str:
